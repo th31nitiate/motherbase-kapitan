@@ -1,0 +1,16 @@
+parameters:
+
+  type: motherbase
+
+  kapitan:
+    vars:
+      target: ${name}
+
+    compile:
+
+      - output_path: docker_compose
+        output_type: yaml
+        input_paths:
+          - templates/motherbase/docker-compose.jsonnet
+        input_type: jsonnet
+

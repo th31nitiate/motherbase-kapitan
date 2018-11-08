@@ -1,0 +1,170 @@
+########################################
+# Classes to include in this target
+########################################
+classes:
+  - type.motherbase
+
+########################################
+# override variables defined in any of
+# the classes above
+########################################
+parameters:
+  name: motherbase-dev
+  docker_compose:
+      domain: "local"
+      version: "3"
+      fluentd_ip: "localhost:24224"
+      depends_on:
+        - fluentd
+      logging:
+        driver: fluentd
+        options:
+          fluentd: localhost:24224
+          tag: motherbase.devsystems
+
+      services:
+        nginx-proxy:
+          - image: jwilder/nginx-proxy
+            logging: true 
+            depends_on:
+              ${docker_compose:depends_on}
+            ports:
+              - "80:80"
+            volumes:
+              - /var/run/docker.sock:/tmp/docker.sock:ro
+        timescale:
+          - image: a9d84fee837b
+            logging: true
+            volumes:
+              - ./database:/data
+            environment:
+              - DB_USER=salt
+              - PROVISION=true
+              - DB_PASS=salt
+              - DB_NAME=salt,gitlabhq_production
+              - DB_EXTENSION=pg_trgm,zombodb
+            depends_on:
+              ${docker_compose:depends_on}
+        salt:
+          - image: 79afac088483
+            command: salt-master
+            depends_on:
+              ${docker_compose:depends_on}
+            logging: true
+            volumes:
+              - ./config/salt-config:/etc/salt/master
+              - ./salt/:/srv/salt/
+              - ./pillar/:/srv/pillar/
+              - ./pki/:/etc/salt/pki/
+            ports:
+              - 4505
+              - 4506
+              - 8000
+        fluentd:
+          - image: 1a70a1114901
+            depends_on:
+              - elasticsearch
+            volumes:
+              - ./config/fluent:/fluentd/etc/fluent.conf
+            links:
+              - "elasticsearch"
+            logging: true
+            ports:
+              - "24224:24224"
+              - "24224:24224/udp"
+        kibana:
+          - image: kibana:6.4.1
+            logging: true
+            depends_on:
+              - fluentd
+              - elasticsearch
+            environment:
+              - VIRTUAL_HOST=kibana.${docker_compose:domain}
+              - VIRTUAL_PORT=5601
+            links:
+              - "elasticsearch"
+            ports:
+              - "5601:5601"   
+        minion:
+          - image: 79afac088483
+            logging: true
+            command: salt-minion
+            depends_on:
+              ${docker_compose:depends_on}
+            volumes:
+              - ./salt/:/srv/salt/
+              - ./pillar/:/srv/pillar/
+              - ./pki/minion:/etc/salt/pki/
+        consul:
+          - image: "consul"
+            logging: true
+            command: "agent -dev -client 0.0.0.0 -config-file /etc/consul/config.json"
+            environment:
+              VIRTUAL_HOST: consul.${docker_compose:domain}
+              VIRTUAL_PORT: 8500
+            depends_on:
+              ${docker_compose:depends_on}
+            volumes:
+              - ./config/consul:/etc/consul/config.json
+        vault:
+          - image: vault
+            logging: true
+            depends_on:
+              - fluentd
+              - consul
+            environment:
+              VAULT_ADDR: http://127.0.0.1:8200
+              VIRTUAL_HOST: vault.${docker_compose:domain}
+              VIRTUAL_PORT: 8200
+            ports:
+              - "8200:8200"
+            volumes:
+              - ./vault:/config
+        elasticsearch:
+          - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+            container_name: elasticsearch
+            logging: true
+            environment:
+              VIRTUAL_HOST: elastic.${docker_compose:domain}
+              VIRTUAL_PORT: 9200
+            healthcheck:
+              test: curl -s http://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+              interval: 30s
+              timeout: 10s
+              retries: 5
+        grafana:
+          - image: grafana/grafana
+            environment:
+              VIRTUAL_HOST: grafana.${docker_compose:domain}
+              VIRTUAL_PORT: 3000
+            logging: true
+            depends_on:
+              ${docker_compose:depends_on}
+        redis:
+          - image: sameersbn/redis:4.0.9-1
+            depends_on:
+              ${docker_compose:depends_on}
+            logging: true
+            command:
+              - --loglevel warning
+        gitlab:
+          - image: sameersbn/gitlab:11.4.0
+            restart: always
+            logging: true
+            depends_on:
+              - redis
+              - timescale
+              - fluentd
+            environment:
+              - VIRTUAL_HOST=gitlab.${docker_compose:domain}
+              - VIRTUAL_PORT=80
+              - DB_ADAPTER=postgresql
+              - DB_HOST=timescale
+              - DB_PORT=5432
+              - DB_USER=salt
+              - DB_PASS=salt
+              - DB_NAME=gitlabhq_production
+              - REDIS_HOST=redis
+              - REDIS_PORT=6379
+              - GITLAB_ROOT_PASSWORD=password
+              - GITLAB_ROOT_EMAIL=root@localhost

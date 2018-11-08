@@ -1,0 +1,52 @@
+##### Primary configuration settings #####
+##########################################
+show_jid: True
+
+cli_summary: True
+
+minion_data_cache: True
+
+vault:
+    url: https://vault:8200
+    auth:
+        method: token
+        token: 36aeb8cc-b9c5-68d1-3bf0-ad655e1868ba
+    policies:
+        - root
+
+consul.host: consul
+consul.port: 8500
+consul.token: 65d4b5a0-479e-4557-bff1-e5607d582e67
+consul.scheme: http
+consul.consistency: default
+consul.dc: vagrant-cloud
+consul.verify: True
+
+cache: consul
+
+returner.pgjsonb.user: 'salt'
+returner.pgjsonb.password: 'salt'
+returner.pgjsonb.host: 'timescale'
+returner.pgjsonb.port: 5432
+
+master_job_cache: pgjsonb
+
+event_return: pgjsonb
+
+consul_config:
+  consul.host: consul
+  consul.port: 8500
+  consul.token: 65d4b5a0-479e-4557-bff1-e5607d582e67
+
+ext_pillar:
+  - consul: consul_config root=salt-shared
+
+
+peer_run:
+    .*:
+        - vault.generate_token
+
+peer:
+  .*:
+    - x509.sign_remote_certificate
+
