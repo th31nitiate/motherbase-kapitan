@@ -1,22 +1,3 @@
-bootstrap: True
-
-pkgs:
-   - curl
-   - unzip
-   - vim
-   - zsh
-   - python-pip
-   - gnupg2
-   - docker.io
-   - python-pygit2
-
-pip-pkgs:
-   - docker-py
-   - influxdb
-   - python-gnupg
-   - psycopg2
-   - python-consul
-
 salt_config:
     vaulturl: https://127.0.0.1:8200
     vaultauthmethod: token

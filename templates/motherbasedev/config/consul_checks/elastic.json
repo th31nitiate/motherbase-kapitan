@@ -1,0 +1,13 @@
+{
+    "service": {
+        "name": "ElasticSearch_ELK",
+        "port": 9200,
+        "check": {
+            "id": "ElasticSearch-health",
+            "name": "HTTP health",
+            "http": "http://elasticsearch:9200",
+            "interval": "10s",
+            "timeout": "1s"
+        }
+    }
+}

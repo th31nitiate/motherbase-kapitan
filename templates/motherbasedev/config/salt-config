@@ -7,10 +7,10 @@ cli_summary: True
 minion_data_cache: True
 
 vault:
-    url: https://vault:8200
+    url: http://vault:8200
     auth:
         method: token
-        token: 36aeb8cc-b9c5-68d1-3bf0-ad655e1868ba
+        token: devVaulToken
     policies:
         - root
 

@@ -17,4 +17,4 @@ parameters:
       - output_path: scripts
         input_type: jinja2
         input_paths:
-          - templates/scripts/
+          - templates/terraform/scripts/

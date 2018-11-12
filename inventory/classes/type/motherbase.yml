@@ -8,9 +8,29 @@ parameters:
 
     compile:
 
-      - output_path: docker_compose
+      - output_path: compose
         output_type: yaml
         input_paths:
-          - templates/motherbase/docker-compose.jsonnet
+          - templates/motherbasedev/main.jsonnet
         input_type: jsonnet
 
+      - output_path: compose
+        input_type: jinja2
+        input_paths:
+          - templates/motherbasedev/scripts
+
+      - output_path: compose/config
+        input_type: jinja2
+        input_paths:
+          - templates/motherbasedev/config
+
+      - output_path: compose/pillar
+        input_type: jinja2
+        input_paths:
+          - templates/motherbasedev/pillar
+
+      - output_path: compose/salt
+        input_type: jinja2
+        input_paths:
+          - templates/motherbasedev/salt
+          

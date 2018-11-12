@@ -46,7 +46,7 @@ parameters:
             - deployer
             - salt-master
           metadata:
-            role: salt-master
+            role: master
           network_interface:
             network: default
             access_config: {}

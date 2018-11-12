@@ -1,3 +1,4 @@
 compiled/*
 docker-compose.yml
 *.DS_Store*
+.vscode
