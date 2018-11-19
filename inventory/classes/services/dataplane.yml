@@ -1,7 +1,7 @@
 parameters:
       services:
         timescale:
-          - image: 6739c755eea1
+          - image: motherdb:dev
             logging: true
             environment:
               - DB_USER=salt
@@ -9,7 +9,7 @@ parameters:
               - DB_NAME=salt,gitlabhq_production
               - DB_EXTENSION=pg_trgm,zombodb
         fluentd:
-          - image: d396a5d379b8
+          - image: fluent:dev
             depends_on:
               - elasticsearch
             volumes:

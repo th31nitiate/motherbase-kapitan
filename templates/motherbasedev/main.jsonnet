@@ -9,7 +9,7 @@ local containers = std.objectHas(inv.parameters.services);
 
 {
   'docker-compose': {
+  services: compose.add_service(services), 
   version: inv.parameters.compose.version,
-    [if "services" in services then "services"]: compose.add_service(), 
   },
 }

@@ -1,6 +1,5 @@
 local kap = import "lib/kapitan.libjsonnet";
 local inv = kap.inventory();
-local compose_services = inv.parameters.compose.services;
 
 {
 
@@ -14,7 +13,7 @@ local compose_services = inv.parameters.compose.services;
       },
   },
 
-  add_service()::
+  add_service(compose_services)::
   {
       [service]: set {
           [if std.objectHas(compose_services, "logging") then "logging"]: if compose_services['services'][0].logging then $.add_logging(service),
