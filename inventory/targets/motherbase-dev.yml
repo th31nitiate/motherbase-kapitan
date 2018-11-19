@@ -3,6 +3,9 @@
 ########################################
 classes:
   - type.motherbase
+  - services.dataplane
+  - services.hashicorp
+  - services.saltenv
 
 ########################################
 # override variables defined in any of
@@ -19,87 +22,3 @@ parameters:
         driver: fluentd
         options:
           fluentd: localhost:24224
-        execlude:
-          consul:
-
-      services:
-        dataplane:
-          timescale:
-            - image: 6739c755eea1
-              logging: true
-              environment:
-                - DB_USER=salt
-                - DB_PASS=salt
-                - DB_NAME=salt,gitlabhq_production
-                - DB_EXTENSION=pg_trgm,zombodb
-          fluentd:
-            - image: d396a5d379b8
-              depends_on:
-                - elasticsearch
-              volumes:
-                - ./config/fluent:/fluentd/etc/fluent.conf
-              links:
-                - "elasticsearch"
-              ports:
-                - "24224:24224"
-                - "24224:24224/udp"
-          elasticsearch:
-            - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
-              container_name: elasticsearch
-              healthcheck:
-                test: curl -s http://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
-                interval: 30s
-                timeout: 10s
-                retries: 5
-          registrator:
-            - image: gliderlabs/registrator:latest
-              command: consul://consul:8500
-              volumes:
-                - /var/run/docker.sock:/tmp/docker.sock
-
-
-        hashicorp:
-          consul:
-            - image: "consul"
-              logging: true
-              command: "agent -dev -client 0.0.0.0 -config-file /etc/consul/config.json"
-              volumes:
-                - ./config/consul:/etc/consul/config.json
-          vault:
-            - image: vault
-              logging: true
-              volumes:
-                - ./vault:/config
-
-
-        saltenv:
-          kibana:
-            - image: kibana:6.4.1
-              logging: true
-              links:
-                - elasticsearch
-              ports:
-                - "5601:5601"   
-          minion:
-            - image: 1ea77d2cb7ba
-              logging: true
-              environment:
-                - SALT_MASTER=False
-              command: salt-minion
-              volumes:
-                - ./salt/:/srv/salt/
-                - ./pillar/:/srv/pillar/
-          salt:
-            - image: 1ea77d2cb7ba
-              environment:
-                - SALT_MASTER=True
-              depends_on:
-                - timescale
-              volumes:
-                - ./config/salt-config:/etc/salt/master
-                - ./salt/:/srv/salt/
-                - ./pillar/:/srv/pillar/
-              ports:
-                - 4505
-                - 4506
-                - 8000

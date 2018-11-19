@@ -14,11 +14,6 @@ parameters:
           - templates/motherbasedev/main.jsonnet
         input_type: jsonnet
 
-      - output_path: compose
-        input_type: jinja2
-        input_paths:
-          - templates/motherbasedev/scripts
-
       - output_path: compose/config
         input_type: jinja2
         input_paths:

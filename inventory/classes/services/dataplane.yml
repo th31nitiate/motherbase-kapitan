@@ -1,0 +1,36 @@
+parameters:
+      services:
+        timescale:
+          - image: 6739c755eea1
+            logging: true
+            environment:
+              - DB_USER=salt
+              - DB_PASS=salt
+              - DB_NAME=salt,gitlabhq_production
+              - DB_EXTENSION=pg_trgm,zombodb
+        fluentd:
+          - image: d396a5d379b8
+            depends_on:
+              - elasticsearch
+            volumes:
+              - ./config/fluent:/fluentd/etc/fluent.conf
+            links:
+              - "elasticsearch"
+            ports:
+              - "24224:24224"
+              - "24224:24224/udp"
+        elasticsearch:
+          - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
+            container_name: elasticsearch
+            healthcheck:
+              test: curl -s http://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
+              interval: 30s
+              timeout: 10s
+              retries: 5
+        kibana:
+          - image: kibana:6.4.1
+            logging: true
+            links:
+              - elasticsearch
+            ports:
+              - "5601:5601"   

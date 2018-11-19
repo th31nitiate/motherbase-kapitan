@@ -1,0 +1,22 @@
+parameters:
+      services:
+        minion:
+          - image: salt:dev
+            logging: true
+            command: '/provision/entrypoint.py'
+            volumes:
+              - ./salt/:/srv/salt/
+              - ./pillar/:/srv/pillar/
+        salt:
+          - image: salt:dev
+            command: salt-minion
+            depends_on:
+              - timescale
+            volumes:
+              - ./config/salt-config:/etc/salt/master
+              - ./salt/:/srv/salt/
+              - ./pillar/:/srv/pillar/
+            ports:
+              - 4505
+              - 4506
+              - 8000
