@@ -14,8 +14,6 @@ parameters:
               - timescale
             volumes:
               - ./config/salt-config:/etc/salt/master
-              - ./salt/:/srv/salt/
-              - ./pillar/:/srv/pillar/
             ports:
               - 4505
               - 4506
