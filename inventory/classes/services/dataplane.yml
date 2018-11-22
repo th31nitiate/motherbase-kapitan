@@ -21,7 +21,6 @@ parameters:
               - "24224:24224/udp"
         elasticsearch:
           - image: docker.elastic.co/elasticsearch/elasticsearch:6.4.2
-            container_name: elasticsearch
             healthcheck:
               test: curl -s http://localhost:9200 >/dev/null; if [[ $$? == 52 ]]; then echo 0; else echo 1; fi
               interval: 30s

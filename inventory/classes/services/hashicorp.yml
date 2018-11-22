@@ -16,3 +16,24 @@ parameters:
             logging: true
             volumes:
               - ./vault:/config
+      config:
+        consul:
+          acl_datacenter: ${name}
+          acl_master_token: "65d4b5a0-479e-4557-bff1-e5607d582e67"
+          bootstrap_expect: 1
+          bind_addr: "127.0.0.1"
+          client_addr: "127.0.0.1"
+          data_dir: "/opt/consul"
+          datacenter: ${name}
+          encrypt: "twAZrmm4F801C+6tC7Funw=="
+          log_level: "debug"
+          server: 'true'
+          enable_debug: 'true'
+        vault:
+          listerner:
+            tcp:
+              address: "0.0.0.0:8200"
+          storage:
+            consul:
+              path: "/vault"
+              consul_address: "0.0.0.0:8500"
