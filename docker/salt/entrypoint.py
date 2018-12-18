@@ -95,6 +95,5 @@ if __name__ == '__main__':
     if run_checks() == True:
         if check_database_state() == True:
             provision_tables()
-        process = subprocess.Popen(["salt-master"], stdout=subprocess.PIPE)
-        for line in process.stdout:
-            sys.stdout.write(line.decode("utf-8"))
+            print("Provisioned tables!!!")
+        subprocess.call("/usr/bin/salt-master", shell=True)

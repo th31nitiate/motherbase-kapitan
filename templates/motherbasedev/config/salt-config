@@ -19,7 +19,7 @@ consul.port: 8500
 consul.token: 65d4b5a0-479e-4557-bff1-e5607d582e67
 consul.scheme: http
 consul.consistency: default
-consul.dc: vagrant-cloud
+consul.dc: dc1
 consul.verify: True
 
 cache: consul
@@ -41,6 +41,9 @@ consul_config:
 ext_pillar:
   - consul: consul_config root=salt-shared
 
+fluent_handler:
+  host: fluentd
+  port: 24224
 
 peer_run:
     .*:

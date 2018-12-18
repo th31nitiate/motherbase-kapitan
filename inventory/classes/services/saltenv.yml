@@ -3,17 +3,19 @@ parameters:
         minion:
           - image: salt:dev
             logging: true
-            command: '/provision/entrypoint.py'
+            command: 'salt-minion'
             volumes:
               - ./salt/:/srv/salt/
               - ./pillar/:/srv/pillar/
         salt:
           - image: salt:dev
-            command: salt-minion
+            command: '/provision/entrypoint.py'
             depends_on:
               - timescale
             volumes:
               - ./config/salt-config:/etc/salt/master
+              - ./salt/:/srv/salt/
+              - ./pillar/:/srv/pillar/
             ports:
               - 4505
               - 4506
