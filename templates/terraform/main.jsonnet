@@ -10,7 +10,7 @@ local compute = import "compute.jsonnet";
 
 
 {
-  "output.tf": output,
+  [if "outputs" in inv.parameters then "output.tf"]: output,
   "provider.tf": provider,
   [if "deployer" in inv.parameters.resources then "compute.tf"]: compute,
   [if "container" in inv.parameters.resources then "kubernetes.tf"]: kubernetes,

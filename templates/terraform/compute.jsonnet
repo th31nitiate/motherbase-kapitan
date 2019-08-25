@@ -16,14 +16,6 @@ local inv = kap.inventory();
       for deployer in std.objectFields(inv.parameters.resources.deployer)
       for set in inv.parameters.resources.deployer[deployer]
     },
-    google_dns_record_set: {
-      [deployer]: set {
-        name: deployer + "." + "out3rheaven" + ".io.",
-        rrdatas: [ "${" + set.rrdatas.name + "." + deployer + "." + set.rrdatas.endpoint  + "}" ],
-      }
-      for deployer in std.objectFields(inv.parameters.resources.deployer_dns)
-      for set in inv.parameters.resources.deployer_dns[deployer]
-    },
   },
 
 
