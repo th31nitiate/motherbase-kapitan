@@ -9,14 +9,13 @@ local inv = kap.inventory();
       version: inv.parameters.provider.google.version,
       region: inv.parameters.region,
       zone: inv.parameters.zone,
-      credentials: "${file(\"~/.config/gcp-creds.json\")}",
+      credentials: "${file(\"~/.gcp/o3h-dev-cloud.json\")}",
     },
   },
 
 
   terraform: {
     backend: inv.parameters.terraform.backend,
-    required_version: inv.parameters.terraform.required_version,
   },
 
   assert

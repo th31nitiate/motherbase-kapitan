@@ -10,7 +10,7 @@ classes:
 # the classes above
 ########################################
 parameters:
-  name: devlensolutions
+  name: o3h-dev-cloud
   region: europe-west1
   zone: europe-west1-b
   default_machine_type: n1-standard-2
@@ -75,5 +75,5 @@ parameters:
 #            image_type: COS
 #            version: 1
 #            machine_type: ${default_machine_type}
-#            node_count: 1
+           # node_count: 1
 #

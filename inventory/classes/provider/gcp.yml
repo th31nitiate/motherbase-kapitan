@@ -5,16 +5,14 @@ parameters:
 
   provider:
     google:
-      version: 1.16.2
+      version: "~> 2.5"
 
   terraform:
-    required_version: ">= 0.11.7"
     backend:
       gcs:
-        bucket: devlen-solutions-state
-        project: devlensolutions
+        bucket: o3h-terraform-bucket
         prefix: /${name}/
-        credentials: ~/.cloud/gcp/credentials.json
+        credentials: ~/.gcp/o3h-dev-cloud.json
 
 
   # List of allowed values for different resources
